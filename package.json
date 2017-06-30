@@ -1,5 +1,7 @@
 {
   "dependencies": {
+    "data.either": "^1.5.1",
+    "data.maybe": "^1.2.2",
     "fluture": "^6.2.7",
     "immutable-ext": "^1.1.0",
     "ramda": "^0.24.1",
