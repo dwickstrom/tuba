@@ -164,6 +164,10 @@ immutable-ext@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/immutable-ext/-/immutable-ext-1.1.0.tgz#ea5a785c9d110aa110db0266a240d87305fa860d"
 
+immutable@^3.8.1:
+  version "3.8.1"
+  resolved "https://registry.yarnpkg.com/immutable/-/immutable-3.8.1.tgz#200807f11ab0f72710ea485542de088075f68cd2"
+
 inspect-f@^1.2.0:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/inspect-f/-/inspect-f-1.2.1.tgz#117573b5df57a509de6fe401131d426bac1592b5"
