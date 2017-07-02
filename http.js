@@ -9,10 +9,10 @@ const getJSON = curry((headers, url) =>
       error ? reject(error) : resolve(body))
   }))
 
-const postJSON = curry((url, headers, payload) =>
+// postJSON :: {} -> String -> {} -> Future JSON
+const postJSON = curry((headers, url, form) =>
   Future((reject, resolve) => {
-    const opts = {url:url, headers:headers, method: "POST", form: payload}
-    request(opts, (error, response, body) =>
+    request({url, headers, method: 'POST', form}, (error, response, body) =>
       error ? reject(error) : resolve(body))
   }))
 

@@ -1,8 +1,9 @@
 const { chain, compose, curry, map } = require('ramda')
-const { safeGet, safeHead , maybeToFuture} = require('./utils')
+const { safeProp, safeHead , maybeToFuture, eitherToMaybe } = require('./utils')
 const { getJSON } = require('./http')
 const Future = require('fluture')
 const Maybe = require('data.maybe')
+const Either = require('data.either')
 const { getFirstTrackArtist, getTrackName } = require('./spotify')
 
 const YT_API_KEY = 'AIzaSyDg2dAih1lnlTL6kh6yuoEMnpnpcDntECk'
@@ -25,17 +26,30 @@ const constructYouTubeUrl = id =>
 // parseYouTubeId :: {} -> String
 const parseYouTubeId = compose(
   map(constructYouTubeUrl),
-  chain(safeGet('videoId')),
-  chain(safeGet('id')),
+  chain(safeProp('videoId')),
+  chain(safeProp('id')),
   chain(safeHead),
-  safeGet('items')
+  safeProp('items')
 )
+
+const tap = x => {
+  console.log(x)
+  return x
+}
+
+// parseJSON :: JSON -> Either {}
+const parseJSON = Either.try(JSON.parse)
+
+// parseYouTubeResponse :: String -> Maybe URL
+const parseYouTubeResponse = compose(
+  chain(parseYouTubeId),
+  eitherToMaybe,
+  parseJSON)
 
 // contactYouTube :: [String] -> [URL]
 const contactYouTube =
   compose(
-    map(parseYouTubeId),
-    map(JSON.parse), // TODO: unsafe?
+    map(parseYouTubeResponse),
     chain(getJSON({})),
     map(youtubeUrl),
     maybeToFuture,

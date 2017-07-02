@@ -1,6 +1,6 @@
 const { getJSON, postJSON } = require('./http')
 const { chain, curry, compose } = require('ramda')
-const { safeGet, safeHead } = require('./utils')
+const { safeProp, safeHead } = require('./utils')
 const Future = require('fluture')
 const { maybeToFuture } = require('./utils')
 
@@ -14,9 +14,9 @@ const cacheAccessToken = res => res
 
 // getAccessToken :: () -> Future String
 const getAccessToken = () =>
-  postJSON('https://accounts.spotify.com/api/token',
-            {Authorization: 'Basic '+authHeader},
-            {grant_type: 'client_credentials'})
+  postJSON({Authorization: 'Basic '+authHeader},
+           'https://accounts.spotify.com/api/token',
+           {grant_type: 'client_credentials'})
   .map(JSON.parse)
   .map(cacheAccessToken)
 
@@ -35,20 +35,19 @@ const getTrackInfo = curry((trackId, accessToken) =>
 // contactSpotify :: String -> Future JSON
 const contactSpotify = trackId =>
   getAccessToken()
-  .map(safeGet('access_token'))
+  .map(safeProp('access_token'))
   .chain(maybeToFuture)
   .chain(getTrackInfo(trackId))
   .map(JSON.parse)
 
 // getTrackName :: {} -> Maybe String
-const getTrackName = res =>
-  safeGet('name', res)
+const getTrackName = safeProp('name')
 
 // getFirstTrackArtist :: {} -> Maybe String
 const getFirstTrackArtist = compose(
-  chain(safeGet('name')),
+  chain(safeProp('name')),
   chain(safeHead),
-  safeGet('artists'))
+  safeProp('artists'))
 
 // callSpotify :: [String] -> Future [String]
 const callSpotify = songs =>

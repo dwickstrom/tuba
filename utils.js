@@ -12,8 +12,12 @@ const maybeToFuture = maybe =>
   ? Future.reject()
   : Future.of(maybe.get())
 
-// safeGet :: String -> {} -> Maybe a
-const safeGet = curry((prop, obj) =>
+// eitherToMaybe :: Either a -> Maybe a
+const eitherToMaybe = either =>
+  either.fold(Maybe.Nothing, Maybe.Just)
+
+// safeProp :: String -> {} -> Maybe a
+const safeProp = curry((prop, obj) =>
   Maybe.fromNullable(obj[prop]))
 
 // safeHead :: [a] -> Maybe a
@@ -21,8 +25,9 @@ const safeHead = aList =>
   Maybe.fromNullable(head(aList))
 
 module.exports = {
-  safeGet,
+  safeProp,
   safeHead,
   maybeToFuture,
   eitherToFuture,
+  eitherToMaybe,
 }

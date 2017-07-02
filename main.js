@@ -14,7 +14,7 @@ const getArgs = () =>
     resolve(parseArgs(process.argv)))
 
 
-const displayLinks = xs => {
+const unsafeDisplayLinks = xs => {
   const table = new Table({head: ['YouTube Links'], colWidths: [60]})
   xs.forEach(x => {
     table.push([x.get()])
@@ -25,4 +25,4 @@ const displayLinks = xs => {
 getArgs()
 .chain(callSpotify)
 .chain(callYouTube)
-.fork(_ => console.log('Video not found.'), displayLinks)
+.fork(_ => console.log('Video not found.'), unsafeDisplayLinks)
