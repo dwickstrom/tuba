@@ -14,44 +14,30 @@ const youTubeSearchTerm = response =>
   .ap(getFirstTrackArtist(response))
   .ap(getTrackName(response))
 
-// youtubeUrl :: String -> String
-const youtubeUrl = term => {
+// youTubeSearchUrl :: String -> String
+const youTubeSearchUrl = term => {
   return `https://content.googleapis.com/youtube/v3/search?q=${term}&maxResults=5&part=snippet&key=${YT_API_KEY}`
 }
 
-// constructYouTubeUrl :: String -> String
-const constructYouTubeUrl = id =>
+// youTubeUrl :: String -> String
+const youTubeUrl = id =>
   `https://www.youtube.com/watch?v=${id}`
 
-// parseYouTubeId :: {} -> String
-const parseYouTubeId = compose(
-  map(constructYouTubeUrl),
+// responseToUrl :: {} -> String
+const responseToUrl = compose(
+  map(youTubeUrl),
   chain(safeProp('videoId')),
   chain(safeProp('id')),
   chain(safeHead),
   safeProp('items')
 )
 
-const tap = x => {
-  console.log(x)
-  return x
-}
-
-// parseJSON :: JSON -> Either {}
-const parseJSON = Either.try(JSON.parse)
-
-// parseYouTubeResponse :: String -> Maybe URL
-const parseYouTubeResponse = compose(
-  chain(parseYouTubeId),
-  eitherToMaybe,
-  parseJSON)
-
 // contactYouTube :: [String] -> [URL]
 const contactYouTube =
   compose(
-    map(parseYouTubeResponse),
+    map(responseToUrl),
     chain(getJSON({})),
-    map(youtubeUrl),
+    map(youTubeSearchUrl),
     maybeToTask,
     youTubeSearchTerm)
 

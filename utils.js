@@ -4,12 +4,12 @@ const Task = require('data.task')
 
 // eitherToTask :: Either a -> Task a
 const eitherToTask = either =>
-  either.fold(Task.reject, Task.of)
+  either.fold(Task.rejected, Task.of)
 
 // maybeTask :: Maybe a -> Task a
 const maybeToTask = maybe =>
   maybe.isNothing
-  ? Task.reject()
+  ? Task.rejected()
   : Task.of(maybe.get())
 
 // eitherToMaybe :: Either a -> Maybe a

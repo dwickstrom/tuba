@@ -14,10 +14,9 @@ const cacheAccessToken = res => res
 
 // getAccessToken :: () -> Task String
 const getAccessToken = () =>
-  postJSON({Authorization: 'Basic '+authHeader},
+  postJSON({Authorization: `Basic ${authHeader}`},
            'https://accounts.spotify.com/api/token',
            {grant_type: 'client_credentials'})
-  .map(JSON.parse)
   .map(cacheAccessToken)
 
 const trackUrl = id => `https://api.spotify.com/v1/tracks/${id}`
@@ -38,7 +37,6 @@ const contactSpotify = trackId =>
   .map(safeProp('access_token'))
   .chain(maybeToTask)
   .chain(getTrackInfo(trackId))
-  .map(JSON.parse)
 
 // getTrackName :: {} -> Maybe String
 const getTrackName = safeProp('name')
