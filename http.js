@@ -1,17 +1,17 @@
-const Future = require('fluture')
+const Task = require('data.task')
 const { curry } = require('ramda')
 const request = require('request')
 
-// getJSON :: {} -> String -> Future JSON
+// getJSON :: {} -> String -> Task JSON
 const getJSON = curry((headers, url) =>
-  Future((reject, resolve) => {
+  new Task((reject, resolve) => {
     request({url, headers}, (error, response, body) =>
       error ? reject(error) : resolve(body))
   }))
 
-// postJSON :: {} -> String -> {} -> Future JSON
+// postJSON :: {} -> String -> {} -> Task JSON
 const postJSON = curry((headers, url, form) =>
-  Future((reject, resolve) => {
+  new Task((reject, resolve) => {
     request({url, headers, method: 'POST', form}, (error, response, body) =>
       error ? reject(error) : resolve(body))
   }))

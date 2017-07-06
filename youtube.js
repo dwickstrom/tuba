@@ -1,7 +1,7 @@
 const { chain, compose, curry, map } = require('ramda')
-const { safeProp, safeHead , maybeToFuture, eitherToMaybe } = require('./utils')
+const { safeProp, safeHead , maybeToTask, eitherToMaybe } = require('./utils')
 const { getJSON } = require('./http')
-const Future = require('fluture')
+const Task = require('data.task')
 const Maybe = require('data.maybe')
 const Either = require('data.either')
 const { getFirstTrackArtist, getTrackName } = require('./spotify')
@@ -52,12 +52,12 @@ const contactYouTube =
     map(parseYouTubeResponse),
     chain(getJSON({})),
     map(youtubeUrl),
-    maybeToFuture,
+    maybeToTask,
     youTubeSearchTerm)
 
-// callYouTube :: [{}] -> Future [String]
+// callYouTube :: [{}] -> Task [String]
 const callYouTube = tracks =>
-  tracks.traverse(Future.of, contactYouTube)
+  tracks.traverse(Task.of, contactYouTube)
 
 module.exports = {
   callYouTube

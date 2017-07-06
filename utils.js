@@ -1,16 +1,16 @@
 const { curry, head } = require('ramda')
 const Maybe = require('data.maybe')
-const Future = require('fluture')
+const Task = require('data.task')
 
-// eitherToFuture :: Either a -> Future a
-const eitherToFuture = either =>
-  either.fold(Future.reject, Future.of)
+// eitherToTask :: Either a -> Task a
+const eitherToTask = either =>
+  either.fold(Task.reject, Task.of)
 
-// maybeFuture :: Maybe a -> Future a
-const maybeToFuture = maybe =>
+// maybeTask :: Maybe a -> Task a
+const maybeToTask = maybe =>
   maybe.isNothing
-  ? Future.reject()
-  : Future.of(maybe.get())
+  ? Task.reject()
+  : Task.of(maybe.get())
 
 // eitherToMaybe :: Either a -> Maybe a
 const eitherToMaybe = either =>
@@ -27,7 +27,7 @@ const safeHead = aList =>
 module.exports = {
   safeProp,
   safeHead,
-  maybeToFuture,
-  eitherToFuture,
+  maybeToTask,
+  eitherToTask,
   eitherToMaybe,
 }

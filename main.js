@@ -1,4 +1,4 @@
-const Future = require('fluture')
+const Task = require('data.task')
 const { chain } = require('ramda')
 const { List } = require('immutable-ext')
 const Table = require('cli-table')
@@ -8,9 +8,9 @@ const { callYouTube } = require('./youtube')
 // parseArgs :: [a] -> [a]
 const parseArgs = args => List.of(...args.slice(2))
 
-// getArgs :: () -> Future [String]
+// getArgs :: () -> Task [String]
 const getArgs = () =>
-  Future((reject, resolve) =>
+  new Task((reject, resolve) =>
     resolve(parseArgs(process.argv)))
 
 

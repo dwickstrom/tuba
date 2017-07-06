@@ -1,8 +1,8 @@
 const { getJSON, postJSON } = require('./http')
 const { chain, curry, compose } = require('ramda')
 const { safeProp, safeHead } = require('./utils')
-const Future = require('fluture')
-const { maybeToFuture } = require('./utils')
+const Task = require('data.task')
+const { maybeToTask } = require('./utils')
 
 const CLIENT_ID = 'b03740660cad4846b28ed45a6760ab69'
 const CLIENT_SECRET = '406d9c93c11b417b9ab3f9f9d59b9247'
@@ -12,7 +12,7 @@ const authHeader =
 
 const cacheAccessToken = res => res
 
-// getAccessToken :: () -> Future String
+// getAccessToken :: () -> Task String
 const getAccessToken = () =>
   postJSON({Authorization: 'Basic '+authHeader},
            'https://accounts.spotify.com/api/token',
@@ -28,15 +28,15 @@ const bearerTokenHeader = token =>
   Authorization: `Bearer ${token}`
 })
 
-// getTrackInfo :: String -> String -> Future JSON
+// getTrackInfo :: String -> String -> Task JSON
 const getTrackInfo = curry((trackId, accessToken) =>
   getJSON(bearerTokenHeader(accessToken), trackUrl(trackId)))
 
-// contactSpotify :: String -> Future JSON
+// contactSpotify :: String -> Task JSON
 const contactSpotify = trackId =>
   getAccessToken()
   .map(safeProp('access_token'))
-  .chain(maybeToFuture)
+  .chain(maybeToTask)
   .chain(getTrackInfo(trackId))
   .map(JSON.parse)
 
@@ -49,9 +49,9 @@ const getFirstTrackArtist = compose(
   chain(safeHead),
   safeProp('artists'))
 
-// callSpotify :: [String] -> Future [String]
+// callSpotify :: [String] -> Task [String]
 const callSpotify = songs =>
-  songs.traverse(Future.of, contactSpotify)
+  songs.traverse(Task.of, contactSpotify)
 
 module.exports = {
   callSpotify,
