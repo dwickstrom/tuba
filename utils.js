@@ -22,6 +22,7 @@ const maybeResultToTaskResult = err => maybe =>
 const eitherToMaybe = either =>
   either.fold(Maybe.Nothing, Maybe.Just)
 
+// maybeToEither :: String a -> Maybe b -> Either a b
 const maybeToEither = err => maybe =>
   maybe.isNothing
   ? Either.Left(err)
