@@ -17,11 +17,11 @@ const getArgs = () =>
   new Task((reject, resolve) =>
     resolve(List.of(...process.argv.slice(2))))
 
-// unsafeDisplayLinks :: [String] -> ()
+// unsafeDisplayLinks :: [Either URL String] -> ()
 const unsafeDisplayLinks = xs => {
   const table = new Table({head: ['YouTube Links'], colWidths: [60]})
   xs.forEach(x => {
-    table.push([x.get()])
+    table.push([x.fold(x => x, y => y)])
   })
   console.log(table.toString())
 }

@@ -4,7 +4,7 @@ const request = require('request')
 const { eitherToTask } = require('./utils')
 const Either = require('data.either')
 
-// parseJSON :: JSON -> Either {}
+// parseJSON :: JSON -> Either JSON String
 const parseJSON = Either.try(JSON.parse)
 
 // getJSON :: {} -> String -> Task JSON

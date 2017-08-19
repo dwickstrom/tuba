@@ -1,5 +1,5 @@
 const { chain, compose, curry, map } = require('ramda')
-const { safeProp, safeHead , maybeToTask, eitherToMaybe } = require('./utils')
+const { safeProp, safeHead , maybeToTask, eitherToMaybe, maybeToEither, eitherToTask } = require('./utils')
 const { getJSON } = require('./http')
 const Task = require('data.task')
 const Maybe = require('data.maybe')
@@ -23,8 +23,9 @@ const youTubeSearchUrl = term => {
 const youTubeUrl = id =>
   `https://www.youtube.com/watch?v=${id}`
 
-// responseToUrl :: {} -> String
+// responseToUrl :: {} -> Either URL String
 const responseToUrl = compose(
+  maybeToEither('Unable to retrieve YouTube URL'),
   map(youTubeUrl),
   chain(safeProp('videoId')),
   chain(safeProp('id')),
@@ -32,18 +33,33 @@ const responseToUrl = compose(
   safeProp('items')
 )
 
-// contactYouTube :: [String] -> [URL]
+// contactYouTube :: Either String URL -> Task Either String URL
 const contactYouTube =
   compose(
     map(responseToUrl),
     chain(getJSON({})),
     map(youTubeSearchUrl),
-    maybeToTask,
-    youTubeSearchTerm)
+    eitherToTask
+  )
+
+// searchOrElse :: Either String URL -> Task Either String URL
+const searchOrElse = either =>
+  either.isLeft
+  ? Task.of(either)
+  : contactYouTube(either)
+
+
+// handleYouTubing :: String -> Task Either String URL
+const handleYouTubing = compose(
+  searchOrElse,
+  maybeToEither('Unknown track id.'),
+  youTubeSearchTerm
+)
+
 
 // callYouTube :: [{}] -> Task [String]
 const callYouTube = tracks =>
-  tracks.traverse(Task.of, contactYouTube)
+  tracks.traverse(Task.of, handleYouTubing)
 
 module.exports = {
   callYouTube

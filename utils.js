@@ -1,6 +1,7 @@
 const { curry, head } = require('ramda')
 const Maybe = require('data.maybe')
 const Task = require('data.task')
+const Either = require('data.either')
 
 // eitherToTask :: Either a -> Task a
 const eitherToTask = either =>
@@ -12,9 +13,19 @@ const maybeToTask = maybe =>
   ? Task.rejected()
   : Task.of(maybe.get())
 
+const maybeResultToTaskResult = err => maybe =>
+  maybe.isNothing
+  ? Task.of(err)
+  : Task.of(maybe.get())
+
 // eitherToMaybe :: Either a -> Maybe a
 const eitherToMaybe = either =>
   either.fold(Maybe.Nothing, Maybe.Just)
+
+const maybeToEither = err => maybe =>
+  maybe.isNothing
+  ? Either.Left(err)
+  : Either.Right(maybe.get())
 
 // safeProp :: String -> {} -> Maybe a
 const safeProp = curry((prop, obj) =>
@@ -28,6 +39,8 @@ module.exports = {
   safeProp,
   safeHead,
   maybeToTask,
+  maybeToEither,
+  maybeResultToTaskResult,
   eitherToTask,
   eitherToMaybe,
 }
